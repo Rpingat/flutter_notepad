@@ -17,11 +17,13 @@ class _NoteEditorState extends State<NoteEditor> {
   int _themeIndex = 0;
   final TextEditingController _controller = TextEditingController();
   String _note = '';
+  bool _readOnly = false;
 
   void _savePreferences() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('themeIndex', _themeIndex);
-    prefs.setString('note', _note);
+    prefs.setString('note', _controller.text);
+    prefs.setBool('readOnly', _readOnly);
   }
 
   void _loadPreferences() async {
@@ -29,6 +31,7 @@ class _NoteEditorState extends State<NoteEditor> {
     setState(() {
       _themeIndex = prefs.getInt('themeIndex') ?? 0;
       _note = prefs.getString('note') ?? '';
+      _readOnly = prefs.getBool('readOnly') ?? false;
       _controller.text = _note;
     });
   }
@@ -49,8 +52,13 @@ class _NoteEditorState extends State<NoteEditor> {
               _themeIndex = index;
               _savePreferences();
             });
+          }, _readOnly, () {
+            setState(() {
+              _readOnly = !_readOnly;
+              _savePreferences();
+            });
           }),
-          _NoteField(_themes, _themeIndex, _controller),
+          _NoteField(_themes, _themeIndex, _controller, _readOnly),
           _Footer(_themes, _themeIndex),
         ],
       ),
@@ -62,8 +70,10 @@ class _Header extends StatelessWidget {
   final List<Color> _themes;
   final int _themeIndex;
   final Function(int) _onThemeChanged;
+  final bool _readOnly;
+  final Function() _onReadOnlyToggle;
 
-  _Header(this._themes, this._themeIndex, this._onThemeChanged);
+  _Header(this._themes, this._themeIndex, this._onThemeChanged, this._readOnly, this._onReadOnlyToggle);
 
   @override
   Widget build(BuildContext context) {
@@ -81,19 +91,32 @@ class _Header extends StatelessWidget {
               color: _themeIndex == 2 ? Colors.white : Colors.black,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              _onThemeChanged((_themeIndex + 1) % 3);
-            },
-            child: Icon(
-              _themeIndex == 0
-                  ? FontAwesomeIcons.sun
-                  : _themeIndex == 1
-                      ? FontAwesomeIcons.cloudSun
-                      : FontAwesomeIcons.moon,
-              size: 28.0,
-              color: _themeIndex == 2 ? Colors.white : Colors.black,
-            ),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: _onReadOnlyToggle,
+                child: Icon(
+                  _readOnly ? FontAwesomeIcons.lock : FontAwesomeIcons.unlock,
+                  size: 20.0,
+                  color: _themeIndex == 2 ? Colors.white : Colors.black,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              GestureDetector(
+                onTap: () {
+                  _onThemeChanged((_themeIndex + 1) % 3);
+                },
+                child: Icon(
+                  _themeIndex == 0
+                      ? FontAwesomeIcons.sun
+                      : _themeIndex == 1
+                          ? FontAwesomeIcons.cloudSun
+                          : FontAwesomeIcons.moon,
+                  size: 20.0,
+                  color: _themeIndex == 2 ? Colors.white : Colors.black,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -105,8 +128,9 @@ class _NoteField extends StatelessWidget {
   final List<Color> _themes;
   final int _themeIndex;
   final TextEditingController _controller;
+  final bool _readOnly;
 
-  _NoteField(this._themes, this._themeIndex, this._controller);
+  _NoteField(this._themes, this._themeIndex, this._controller, this._readOnly);
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +145,7 @@ class _NoteField extends StatelessWidget {
         child: TextField(
           controller: _controller,
           maxLines: null,
+          readOnly: _readOnly,
           style: GoogleFonts.openSans(
             fontSize: 18.0,
             color: _themeIndex == 2 ? Colors.black : Colors.black,
