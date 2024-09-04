@@ -58,7 +58,9 @@ class _NoteEditorState extends State<NoteEditor> {
               _savePreferences();
             });
           }),
-          _NoteField(_themes, _themeIndex, _controller, _readOnly),
+          Expanded(
+            child: _NoteField(_themes, _themeIndex, _controller, _readOnly),
+          ),
           _Footer(_themes, _themeIndex),
         ],
       ),
@@ -134,29 +136,27 @@ class _NoteField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.all(16.0),
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: _themeIndex == 2 ? Colors.white : _themes[_themeIndex].withOpacity(0.2),
-          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+    return Container(
+      margin: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: _themeIndex == 2 ? Colors.white : _themes[_themeIndex].withOpacity(0.2),
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      ),
+      child: TextField(
+        controller: _controller,
+        maxLines: null,
+        readOnly: _readOnly,
+        style: GoogleFonts.openSans(
+          fontSize: 18.0,
+          color: _themeIndex == 2 ? Colors.black : Colors.black,
         ),
-        child: TextField(
-          controller: _controller,
-          maxLines: null,
-          readOnly: _readOnly,
-          style: GoogleFonts.openSans(
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Start writing your note...',
+          hintStyle: GoogleFonts.raleway(
             fontSize: 18.0,
-            color: _themeIndex == 2 ? Colors.black : Colors.black,
-          ),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Start writing your note...',
-            hintStyle: GoogleFonts.raleway(
-              fontSize: 18.0,
-              color: _themeIndex == 2 ? Colors.grey : Colors.grey[600],
-            ),
+            color: _themeIndex == 2 ? Colors.grey : Colors.grey[600],
           ),
         ),
       ),
