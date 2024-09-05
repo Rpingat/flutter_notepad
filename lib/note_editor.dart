@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'theme.dart';
-import 'emoji_picker.dart';
-import 'note_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'theme.dart';
+import 'note_field.dart';
+import 'emoji_picker.dart';
 
 class NoteEditor extends StatefulWidget {
   @override
@@ -14,6 +14,9 @@ class _NoteEditorState extends State<NoteEditor> {
     Colors.blue,
     Colors.yellow,
     Colors.black,
+    Colors.green,
+    Colors.purple,
+    Colors.orange,
   ];
   int _themeIndex = 0;
   final TextEditingController _controller = TextEditingController();
@@ -26,7 +29,6 @@ class _NoteEditorState extends State<NoteEditor> {
     prefs.setInt('themeIndex', _themeIndex);
     prefs.setString('note', _controller.text);
     prefs.setBool('readOnly', _readOnly);
-    print('Preferences saved');
   }
 
   void _loadPreferences() async {
@@ -56,28 +58,43 @@ class _NoteEditorState extends State<NoteEditor> {
         },
         child: Column(
           children: [
-            ThemeHeader(_themes, _themeIndex, (index) {
-              setState(() {
-                _themeIndex = index;
-                _savePreferences();
-              });
-            }, _readOnly, () {
-              setState(() {
-                _readOnly = !_readOnly;
-                _savePreferences();
-              });
-            }, () {
-              setState(() {
-                _showEmojiPicker = !_showEmojiPicker;
-              });
-            }),
-            Expanded(
-              child: NoteField(_themes, _themeIndex, _controller, _readOnly, () {
+            ThemeHeader(
+              _themes,
+              _themeIndex,
+              (index) {
+                setState(() {
+                  _themeIndex = index;
+                  _savePreferences();
+                });
+              },
+              _readOnly,
+              () {
+                setState(() {
+                  _readOnly = !_readOnly;
+                  _savePreferences();
+                });
+              },
+              () {
                 setState(() {
                   _showEmojiPicker = !_showEmojiPicker;
                 });
-              }, _showEmojiPicker),
+              },
+              _showEmojiPicker,  // Pass the _showEmojiPicker state
             ),
+            Expanded(
+              child: NoteField(
+                _themes,
+                _themeIndex,
+                _controller,
+                _readOnly,
+              ),
+            ),
+            if (_showEmojiPicker)
+              EmojiPickerWidget(
+                onEmojiSelected: (emoji) {
+                  _controller.text += emoji.emoji;
+                },
+              ),
             ThemeFooter(_themes, _themeIndex),
           ],
         ),

@@ -8,6 +8,7 @@ class ThemeHeader extends StatelessWidget {
   final bool _readOnly;
   final Function() _onReadOnlyToggle;
   final Function() _onEmojiPickerToggle;
+  final bool _showEmojiPicker;  // New parameter
 
   ThemeHeader(
     this._themes,
@@ -16,6 +17,7 @@ class ThemeHeader extends StatelessWidget {
     this._readOnly,
     this._onReadOnlyToggle,
     this._onEmojiPickerToggle,
+    this._showEmojiPicker,  // Initialize the new parameter
   );
 
   @override
@@ -32,22 +34,36 @@ class ThemeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(
-            icon: Icon(FontAwesomeIcons.palette),
-            onPressed: () {
-              _onThemeChange((_themeIndex + 1) % _themes.length);
-            },
-            color: Colors.white,
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: IconButton(
+              key: ValueKey(_themes[_themeIndex]),
+              icon: Icon(
+                FontAwesomeIcons.palette,
+                color: _themes[_themeIndex],  // Dynamically set icon color
+              ),
+              onPressed: () {
+                _onThemeChange((_themeIndex + 1) % _themes.length);
+              },
+            ),
+          ),
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: IconButton(
+              key: ValueKey(_readOnly),
+              icon: Icon(
+                _readOnly ? Icons.lock : Icons.lock_open,
+                color: Colors.white,
+              ),
+              onPressed: _onReadOnlyToggle,
+            ),
           ),
           IconButton(
-            icon: Icon(_readOnly ? Icons.edit : Icons.lock),
-            onPressed: _onReadOnlyToggle,
-            color: Colors.white,
-          ),
-          IconButton(
-            icon: Icon(Icons.emoji_emotions),
+            icon: Icon(
+              Icons.emoji_emotions,
+              color: _showEmojiPicker ? Colors.yellow : Colors.white,  // Dynamic color
+            ),
             onPressed: _onEmojiPickerToggle,
-            color: Colors.white,
           ),
         ],
       ),
@@ -77,12 +93,16 @@ class ThemeFooter extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: () {},
+            onPressed: () {
+              // Save functionality
+            },
             color: Colors.white,
           ),
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () {},
+            onPressed: () {
+              // Delete functionality
+            },
             color: Colors.white,
           ),
         ],
