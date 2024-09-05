@@ -11,7 +11,7 @@ class EmojiPickerWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.0),
       color: Colors.white,
-      height: 250,  // Set the height of the emoji picker
+      height: 250,
       child: EmojiPicker(
         onEmojiSelected: (category, emoji) {
           onEmojiSelected(emoji);
@@ -20,16 +20,16 @@ class EmojiPickerWidget extends StatelessWidget {
           emojiViewConfig: const EmojiViewConfig(
             columns: 7,  // Number of columns in the emoji grid
             emojiSizeMax: 32.0,  // Maximum size for each emoji
-            verticalSpacing: 0,  // Spacing between rows of emojis
-            horizontalSpacing: 0,  // Spacing between columns of emojis
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
             noRecents: Text(
               'No Recents',
               style: TextStyle(fontSize: 20, color: Colors.black26),
-            ),  // Custom widget to display when no recent emojis
+            ),
           ),
           categoryViewConfig: const CategoryViewConfig(
             initCategory: Category.SMILEYS,  // Default category
-            backgroundColor: Colors.white,  // Background color of emoji picker
+            bgColor: Colors.white,  // Background color of emoji picker
             indicatorColor: Colors.blue,  // Color of the selected category indicator
             iconColor: Colors.grey,  // Default icon color for categories
             iconColorSelected: Colors.blue,  // Selected category icon color

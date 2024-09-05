@@ -34,34 +34,26 @@ class ThemeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
-            child: IconButton(
-              key: ValueKey(_themes[_themeIndex]),
-              icon: Icon(
-                FontAwesomeIcons.palette,
-                color: _themes[_themeIndex],  // Dynamically set icon color
-              ),
-              onPressed: () {
-                _onThemeChange((_themeIndex + 1) % _themes.length);
-              },
+          IconButton(
+            icon: Icon(
+              FontAwesomeIcons.palette,
+              color: Colors.white,  // Theme icon always white
             ),
+            onPressed: () {
+              _onThemeChange((_themeIndex + 1) % _themes.length);
+            },
           ),
-          AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
-            child: IconButton(
-              key: ValueKey(_readOnly),
-              icon: Icon(
-                _readOnly ? Icons.lock : Icons.lock_open,
-                color: Colors.white,
-              ),
-              onPressed: _onReadOnlyToggle,
+          IconButton(
+            icon: Icon(
+              _readOnly ? Icons.lock : Icons.lock_open,  // Toggles between lock/unlock
+              color: Colors.white,  // Always white for icons
             ),
+            onPressed: _onReadOnlyToggle,
           ),
           IconButton(
             icon: Icon(
               Icons.emoji_emotions,
-              color: _showEmojiPicker ? Colors.yellow : Colors.white,  // Dynamic color
+              color: _showEmojiPicker ? Colors.yellow : Colors.white,  // Dynamic color for emoji picker
             ),
             onPressed: _onEmojiPickerToggle,
           ),
